@@ -27,6 +27,9 @@
 </template>
 
 <script>
+import { actionTypes, getterTypes } from "@/store/auth";
+import { mapGetters } from "vuex";
+
 export default {
   name: "Login",
   data() {
@@ -35,8 +38,27 @@ export default {
       password: ""
     };
   },
+  computed: {
+    ...mapGetters({
+      isSubmitting: getterTypes.isSubmitting
+    }),
+    userCredentials() {
+      return {
+        email: this.email,
+        password: this.password
+      };
+    }
+  },
   methods: {
-    submitHandler() {}
+    submitHandler() {
+      this.$store
+        .dispatch(actionTypes.login, {
+          userCredentials: this.userCredentials
+        })
+        .then(() => {
+          this.$router.push({ name: "home" });
+        });
+    }
   }
 };
 </script>
