@@ -13,11 +13,16 @@ export const getterTypes = {
 export const mutationTypes = {
   loginStart: "[auth] login start",
   loginSuccess: "[auth] login success",
-  loginFailure: "[auth] login failure"
+  loginFailure: "[auth] login failure",
+
+  logoutStart: "[auth] logout start",
+  logoutSuccess: "[auth] logout success",
+  logoutFailure: "[auth] logout failure"
 };
 
 export const actionTypes = {
-  login: "[auth] login"
+  login: "[auth] login",
+  logout: "[auth] logout"
 };
 
 const state = {
@@ -48,6 +53,19 @@ const mutations = {
   [mutationTypes.loginFailure](state, errors) {
     state.isSubmitting = false;
     state.errors = errors;
+  },
+
+  [mutationTypes.logoutStart](state) {
+    state.isSubmitting = true;
+    state.errors = null;
+  },
+  [mutationTypes.logoutSuccess](state) {
+    state.isSubmitting = false;
+    state.data = null;
+  },
+  [mutationTypes.logoutFailure](state, errors) {
+    state.isSubmitting = false;
+    state.errors = errors;
   }
 };
 
@@ -60,6 +78,17 @@ const actions = {
       commit(mutationTypes.loginSuccess, response.user);
     } catch (e) {
       commit(mutationTypes.loginFailure, e.response.data.errors);
+      throw e;
+    }
+  },
+  async [actionTypes.logout]({ commit }) {
+    try {
+      commit(mutationTypes.logoutStart);
+      await authApi.logout();
+      commit(mutationTypes.logoutSuccess);
+      token.remove();
+    } catch (e) {
+      commit(mutationTypes.logoutFailure, e.response.data.errors);
       throw e;
     }
   }

@@ -9,16 +9,49 @@
         Test
       </a>
     </router-link>
-    <router-link :to="{ name: 'login' }" v-slot="{ navigate }" custom>
-      <el-menu-item @click="navigate">Вход</el-menu-item>
-    </router-link>
-    <el-menu-item @click="navigate">Выйти</el-menu-item>
+    <template v-if="isAnonymous">
+      <router-link
+        :to="{ name: 'login' }"
+        v-slot="{ navigate, isActive }"
+        custom
+      >
+        <div
+          class="el-menu-item"
+          @click="navigate"
+          :class="{ 'is-active': isActive }"
+        >
+          Войти
+        </div>
+      </router-link>
+    </template>
+    <template v-if="isAuth">
+      <div class="el-menu-item" @click="logoutHandler">Выйти</div>
+    </template>
   </el-menu>
 </template>
 
 <script>
+import { actionTypes, getterTypes } from "@/store/auth";
+import { mapActions, mapGetters } from "vuex";
+
 export default {
-  name: "Header"
+  name: "Header",
+  computed: {
+    ...mapGetters({
+      isAuth: getterTypes.isAuth,
+      isAnonymous: getterTypes.isAnonymous
+    })
+  },
+  methods: {
+    ...mapActions({
+      logout: actionTypes.logout
+    }),
+    logoutHandler() {
+      this.logout().then(() => {
+        if (this.$route.name !== "home") this.$router.push({ name: "home" });
+      });
+    }
+  }
 };
 </script>
 

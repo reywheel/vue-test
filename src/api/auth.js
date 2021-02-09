@@ -6,6 +6,11 @@ const login = userCredentials => {
     .then(response => response.data);
 };
 
+const logout = () => {
+  return axios.post("auth/logout");
+};
+
 export default {
-  login
+  login,
+  logout
 };
