@@ -2,9 +2,10 @@ import authApi from "@/api/auth";
 import token from "@/utils/token";
 
 export const getterTypes = {
-  getUser: "[auth] get user",
+  user: "[auth] user",
   isSubmitting: "[auth] is submitting",
-  getErrors: "[auth] get errors",
+  errors: "[auth] errors",
+  isHaveErrors: "[auth] is have errors",
   isAuth: "[auth] is auth",
   isAnonymous: "[auth] is anonymous"
 };
@@ -26,8 +27,9 @@ const state = {
 };
 
 const getters = {
-  [getterTypes.getUser]: state => state.data,
-  [getterTypes.getErrors]: state => state.errors,
+  [getterTypes.user]: state => state.data,
+  [getterTypes.errors]: state => state.errors,
+  [getterTypes.isHaveErrors]: state => state.errors !== null,
   [getterTypes.isSubmitting]: state => state.isSubmitting,
   [getterTypes.isAuth]: state => state.data !== null,
   [getterTypes.isAnonymous]: state => state.data === null
@@ -58,6 +60,7 @@ const actions = {
       commit(mutationTypes.loginSuccess, response.user);
     } catch (e) {
       commit(mutationTypes.loginFailure, e.response.data.errors);
+      throw e;
     }
   }
 };

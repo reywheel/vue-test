@@ -1,6 +1,12 @@
 <template>
   <el-row>
     <el-col :span="6" :offset="9" class="column">
+      <AppValidationErrors
+        v-if="isHaveErrors"
+        :errors="preparedValidationErrors"
+        title="Ошибки валидации"
+        class="validation-errors"
+      />
       <el-card class="box-card card">
         <div slot="header" class="clearfix card__header">
           <h2>Вход</h2>
@@ -28,10 +34,14 @@
 
 <script>
 import { actionTypes, getterTypes } from "@/store/auth";
-import { mapGetters } from "vuex";
+import { mapGetters, mapActions } from "vuex";
+import AppValidationErrors from "@/components/ValidationErrors";
 
 export default {
   name: "Login",
+  components: {
+    AppValidationErrors
+  },
   data() {
     return {
       email: "",
@@ -40,8 +50,15 @@ export default {
   },
   computed: {
     ...mapGetters({
-      isSubmitting: getterTypes.isSubmitting
+      isSubmitting: getterTypes.isSubmitting,
+      validationErrors: getterTypes.errors,
+      isHaveErrors: getterTypes.isHaveErrors
     }),
+    preparedValidationErrors() {
+      return this.validationErrors
+        ? Object.values(this.validationErrors).flat()
+        : null;
+    },
     userCredentials() {
       return {
         email: this.email,
@@ -50,14 +67,15 @@ export default {
     }
   },
   methods: {
+    ...mapActions({
+      login: actionTypes.login
+    }),
     submitHandler() {
-      this.$store
-        .dispatch(actionTypes.login, {
-          userCredentials: this.userCredentials
-        })
+      this.login({ userCredentials: this.userCredentials })
         .then(() => {
           this.$router.push({ name: "home" });
-        });
+        })
+        .catch(() => {});
     }
   }
 };
@@ -67,7 +85,12 @@ export default {
 .column {
   height: calc(100vh - 100px);
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.validation-errors {
+  margin-bottom: 20px;
 }
 
 .card {

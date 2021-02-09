@@ -1,6 +1,6 @@
 <template>
   <el-menu class="el-menu-demo" mode="horizontal">
-    <router-link :to="{ name: 'home' }" v-slot="{ navigate, href }">
+    <router-link :to="{ name: 'home' }" v-slot="{ navigate, href }" custom>
       <a
         :href="href"
         class="header__logo el-menu-item el-menu-item--left"
@@ -9,9 +9,10 @@
         Test
       </a>
     </router-link>
-    <router-link :to="{ name: 'login' }" v-slot="{ navigate }">
+    <router-link :to="{ name: 'login' }" v-slot="{ navigate }" custom>
       <el-menu-item @click="navigate">Вход</el-menu-item>
     </router-link>
+    <el-menu-item @click="navigate">Выйти</el-menu-item>
   </el-menu>
 </template>
 

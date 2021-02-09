@@ -24,3 +24,8 @@ const router = new VueRouter({
 });
 
 export default router;
+
+// TODO:
+// - сделать компонент отображения ошибок
+// - сделать страницу входа
+// - отображение меню в зависимости от isAuth
